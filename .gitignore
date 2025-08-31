@@ -1,0 +1,8 @@
+.vscode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite
+Section_3_Rest_API/instance/

@@ -1,0 +1,8 @@
+services:
+  api:
+    build: .
+    image: stores-api:latest
+    container_name: stores-api
+    ports:
+      - "5050:5050"            # host:container
+    restart: unless-stopped

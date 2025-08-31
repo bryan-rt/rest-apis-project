@@ -1,0 +1,9 @@
+Flask>=3.0
+debugpy>=1.0.0
+flask-smorest
+python-dotenv
+sqlalchemy
+flask-sqlalchemy
+flask-jwt-extended
+passlib[bcrypt]==1.7.4
+flask-migrate

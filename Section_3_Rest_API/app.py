@@ -17,12 +17,14 @@ from blocklist import BLOCKLIST
 
 
 def _resolve_db_uri(db_url_override=None):
-    """Resolve a SQLAlchemy DB URI and normalize postgres scheme."""
-    uri = db_url_override or os.getenv("DATABASE_URL") or os.getenv("SQLALCHEMY_DATABASE_URI")
-    if uri and uri.startswith("postgres://"):
+    uri = db_url_override or os.getenv("DATABASE_URL")
+    if not uri:
+        raise RuntimeError("DATABASE_URL is not set (and SQLite fallback is disabled).")
+    if uri.startswith("postgres://"):
         uri = uri.replace("postgres://", "postgresql://", 1)
-    # Safe local fallback only if nothing provided (avoids crashes while developing)
-    return uri or "sqlite:///data.db"
+    if not uri.startswith("postgresql://"):
+        raise RuntimeError(f"Non-Postgres DB URL provided: {uri}")
+    return uri
 
 
 def create_app(db_url=None):

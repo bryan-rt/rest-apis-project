@@ -1,5 +1,6 @@
 import os
 import requests
+from flask import current_app
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from passlib.hash import pbkdf2_sha256
@@ -10,6 +11,7 @@ from db import db
 from blocklist import BLOCKLIST
 from models import UserModel
 from schemas import UserSchema, UserRegisterSchema
+from tasks import send_user_registration_email
 
 blp = Blueprint("Users", "user", description="Operations on users")
 
@@ -45,12 +47,12 @@ class UserRegister(MethodView):
         db.session.add(user)
         db.session.commit()
 
-        send_simple_message(
-            to=user_data["email"],
-            subject="Welcome to our Store API",
-            text=f"Thank you for registering, {user_data['username']}!"
+        current_app.queue.enqueue(
+            send_user_registration_email,
+            user.username,
+            user.email
         )
-
+        
         return {"message": "User created successfully."}, 201
 
 @blp.route("/login")
